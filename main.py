@@ -30,8 +30,8 @@ st.write(
 )
 
 
-image_filename = upload_image()
-receipt_file = run_ocr_on_image(image_filename)
+image_filenames = upload_image()
+receipt_file = run_ocr_on_image(image_filenames)
 
 st.write(
     """
