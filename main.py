@@ -6,8 +6,7 @@ import streamlit as st
 from constants import *
 from data_io import load_receipt_ocr_csv, save_output
 from nanonet import run_single_image_ocr
-from streamlit_components import upload_image, run_ocr_on_image
-
+from streamlit_components import run_ocr_on_image, upload_image
 
 if "saved" not in st.session_state:
     st.session_state.saved = {}
@@ -55,7 +54,7 @@ first_row = loaded_df.iloc[0]
 image_file = os.path.join(IMG_DIR, first_row.original_filename)
 global_infos = first_row[GLOBAL_INFO_COLUMNS].copy()
 # For some reason, renaming the column makes it non-editable in streamlit
-#global_infos.name = "Ticket information"
+# global_infos.name = "Ticket information"
 global_infos = pd.DataFrame(global_infos)
 
 st.write(f"Editing receipt from {receipt_file}, with image {image_file}")
@@ -76,7 +75,7 @@ with col2:
         global_infos.reset_index(),
         use_container_width=True,
         hide_index=True,
-        disabled=["index"]
+        disabled=["index"],
     )
     form.write("### Items")
     edited_df = form.data_editor(

@@ -1,5 +1,6 @@
-import streamlit as st
 import os
+
+import streamlit as st
 
 from constants import IMG_DIR, OCR_DIR
 from data_io import load_image
@@ -20,11 +21,16 @@ def validate_and_show_image(uploaded_file, col):
 
 
 def upload_image():
-    uploaded_files = st.file_uploader("Choose a receipt image", type=["jpg"], accept_multiple_files=True)
+    uploaded_files = st.file_uploader(
+        "Choose a receipt image", type=["jpg"], accept_multiple_files=True
+    )
     image_filenames = []
-    if len(uploaded_files)>0:
+    if len(uploaded_files) > 0:
         columns = st.columns(len(uploaded_files))
-        image_filenames = [validate_and_show_image(uploaded_file, col) for uploaded_file, col in zip(uploaded_files, columns)]
+        image_filenames = [
+            validate_and_show_image(uploaded_file, col)
+            for uploaded_file, col in zip(uploaded_files, columns)
+        ]
     return image_filenames
 
 
