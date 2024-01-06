@@ -4,6 +4,7 @@ import streamlit as st
 
 from constants import IMG_DIR, OCR_DIR
 from data_io import load_image
+from nanonet import run_single_image_ocr
 
 
 def validate_and_show_image(uploaded_file, col):
