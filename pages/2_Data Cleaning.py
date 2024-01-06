@@ -5,32 +5,7 @@ import streamlit as st
 
 from constants import *
 from data_io import load_receipt_ocr_csv, save_output
-from nanonet import run_single_image_ocr
-from streamlit_components import run_ocr_on_image, upload_image
 
-if "saved" not in st.session_state:
-    st.session_state.saved = {}
-
-
-if "receipt" not in st.session_state:
-    st.session_state.receipt = {}
-
-# Streamlit view
-st.set_page_config(
-    page_title="Edit receipt app",
-    page_icon="X",
-    layout="wide",
-)
-
-st.write(
-    """
-# Scan new receipt
-"""
-)
-
-
-image_filenames = upload_image()
-receipt_file = run_ocr_on_image(image_filenames)
 
 st.write(
     """
@@ -40,12 +15,14 @@ st.write(
 
 
 receipt_list = [f for f in os.listdir(OCR_DIR) if f.endswith(".csv")]
-if receipt_file is None:
-    if "last_run" in st.session_state.receipt:
-        receipt_file = st.session_state.receipt["last_run"]
-    else:
-        st.write(f"Loading from directory.")
-        receipt_file = receipt_list[0]
+if st.session_state.receipt["file"] is not None:
+    receipt_file = st.session_state.receipt["file"]
+    st.session_state.receipt["index"] = receipt_list.index(receipt_file)
+else:
+    st.write(f"Loading from directory.")
+    st.session_state.receipt["index"] = 0
+    receipt_file = receipt_list[0]
+    st.session_state.receipt["file"] = receipt_file
 
 loaded_df = load_receipt_ocr_csv(receipt_file)
 
@@ -94,32 +71,3 @@ with col2:
 
         if os.path.join(CSV_DIR, receipt_file) in st.session_state.saved:
             form.write(f"New data saved to {os.path.join(CSV_DIR, receipt_file)}")
-
-
-st.write(
-    """
-# Add categories, clean descriptions
-"""
-)
-
-loaded_descriptions = load_receipt_ocr_csv(receipt_file)
-if any(col  not in loaded_descriptions for col in CLASSIFICATION_COLUMNS):
-    loaded_descriptions[CLASSIFICATION_COLUMNS] = "" 
-
-
-form2 = st.form(key="my_form2")
-edited_df = form2.data_editor(
-    loaded_descriptions[["Description"] + CLASSIFICATION_COLUMNS],
-    use_container_width=True,
-    hide_index=True,
-    disabled="Description"
-)
-submit_button2 = form2.form_submit_button(label="Save")
-if submit_button2:
-    final_df = loaded_descriptions.copy()
-    final_df[CLASSIFICATION_COLUMNS] = edited_df[CLASSIFICATION_COLUMNS]
-    result = save_output(final_df, receipt_file)
-    st.session_state.saved[os.path.join(CSV_DIR, receipt_file)] = result
-
-    if os.path.join(CSV_DIR, receipt_file) in st.session_state.saved:
-        form2.write(f"New data saved to {os.path.join(CSV_DIR, receipt_file)}")

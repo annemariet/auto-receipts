@@ -32,12 +32,13 @@ def upload_image():
             validate_and_show_image(uploaded_file, col)
             for uploaded_file, col in zip(uploaded_files, columns)
         ]
+    st.session_state.image_filenames = image_filenames
     return image_filenames
 
 
-def run_ocr_on_image(image_filenames):
+def run_ocr_on_image():
     receipt_file = None
-    if len(image_filenames) == 0:
+    if len(st.session_state.image_filenames) == 0:
         return receipt_file
 
     submit_nanonet = st.button(label="Extract data as csv")
@@ -45,7 +46,7 @@ def run_ocr_on_image(image_filenames):
     if submit_nanonet:
         files_to_submit = []
         files_exist = []
-        for image_filename in image_filenames:
+        for image_filename in st.session_state.image_filenames:
             ocr_file = os.path.join(OCR_DIR, image_filename.replace(".jpg", ".csv"))
             if os.path.exists(ocr_file):
                 st.write("File already analyzed")
@@ -66,5 +67,5 @@ def run_ocr_on_image(image_filenames):
 
         if os.path.join(OCR_DIR, receipt_file) in st.session_state.saved:
             st.write(f"OCR results saved. Loading for correction.")
-        st.session_state.receipt["last_run"] = receipt_file
+        st.session_state.receipt["file"] = receipt_file
     return receipt_file
