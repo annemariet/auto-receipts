@@ -16,6 +16,14 @@ st.set_page_config(
     layout="wide",
 )
 
+"# 🧾This is your new accounting home!"
+
+"""
+ - 🪄 Go to Data Acquisition to Scan receipts
+ - 🧹 Fix OCR errors in Data Cleaning
+ - ✍️ Add Categories and other data in Data Enrichment
+ - 📈 Explore your spending in Visualization
+"""
 
 if "saved" not in st.session_state:
     st.session_state.saved = {}

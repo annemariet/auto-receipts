@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from constants import CSV_DIR
 
 
-"# My spending"
+"# 📈 My spending"
 "## Average basket price"
 
 all_receipts = pd.concat(

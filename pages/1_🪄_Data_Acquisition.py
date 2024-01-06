@@ -6,7 +6,7 @@ from streamlit_components import run_ocr_on_image, upload_image
 
 st.write(
     """
-# Scan new receipt
+# 🪄 Scan new receipt
 """
 )
 

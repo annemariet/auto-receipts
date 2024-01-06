@@ -9,7 +9,7 @@ from data_io import load_receipt_ocr_csv, save_output
 
 st.write(
     """
-# Correct receipt
+# 🧹 Correct receipt
 """
 )
 
