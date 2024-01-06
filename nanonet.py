@@ -27,6 +27,17 @@ def nanonet_ocr(image_file):
     return response.json()["result"]
 
 
+def nanonet_ocr_multi(image_file_list):
+    url = "https://app.nanonets.com/api/v2/OCR/Model/9bfbc8d7-b21c-48d9-8e74-41cff355b464/LabelFile/?async=false"
+
+    data = {"file": [open(image_file, "rb") for image_file in image_file_list]}
+
+    response = requests.post(
+        url, auth=requests.auth.HTTPBasicAuth(get_nanonet_key(), ""), files=data
+    )
+    return response.json()["result"]
+
+
 def extract_as_clean_csv(nanonet_result):
     raw_output = pd.DataFrame(nanonet_result["prediction"])
     processed_output1 = pd.DataFrame(
@@ -89,3 +100,7 @@ def run_single_image_ocr(image_filename):
     assert nanonet_result
     ocr_df = extract_as_clean_csv(nanonet_result[0])
     return ocr_df
+
+
+def run_multi_image_ocr(image_file_list):
+    pass
