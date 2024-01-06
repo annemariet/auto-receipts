@@ -10,9 +10,11 @@ from constants import *
 def load_receipt_ocr_csv(receipt_file):
     if os.path.exists(os.path.join(CSV_DIR, receipt_file)):
         df = pd.read_csv(os.path.join(CSV_DIR, receipt_file), index_col=0)
+        st.write("Loaded clean file")
     else:
         df = pd.read_csv(os.path.join(OCR_DIR, receipt_file), index_col=0)
         df[BAK_COLUMNS] = df[EDITABLE_COLUMNS].copy()
+        st.write("Loaded raw file")
     return df
 
 
@@ -22,6 +24,7 @@ def load_image(image_file):
 
 
 def save_output(output_df, receipt_file):
+    print(output_df.columns)
     with st.spinner("Saving..."):
         output_df.to_csv(os.path.join(CSV_DIR, receipt_file))
         print(f"saved to {os.path.join(CSV_DIR, receipt_file)} !")

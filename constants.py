@@ -24,3 +24,4 @@ GLOBAL_INFO_COLUMNS = [
 ]
 
 EDITABLE_COLUMNS = ["Price", "Description", "Line_Amount", "Quantity"]
+CLASSIFICATION_COLUMNS = ["Quantity of unit", "Unit of quantity", "Simplified Description", "Category 1", "Category 2"]
