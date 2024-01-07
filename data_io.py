@@ -19,9 +19,7 @@ def load_receipt_ocr_csv(receipt_file):
     if any(col not in df for col in CLASSIFICATION_COLUMNS):
         df[CLASSIFICATION_COLUMNS] = ""
     else:
-        df[CLASSIFICATION_COLUMNS] = (
-            df[CLASSIFICATION_COLUMNS].fillna("").astype(str)
-        )
+        df[CLASSIFICATION_COLUMNS] = df[CLASSIFICATION_COLUMNS].fillna("").astype(str)
     return df
 
 
