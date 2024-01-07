@@ -69,3 +69,31 @@ def run_ocr_on_image():
             st.write(f"OCR results saved. Loading for correction.")
         st.session_state.receipt["file"] = receipt_file
     return receipt_file
+
+
+
+def on_next_receipt():
+    receipt_list = [f for f in os.listdir(OCR_DIR) if f.endswith(".csv")]
+    index = receipt_list.index(st.session_state.selected_receipt)
+    index = (index + 1) % len(receipt_list)
+    st.session_state.selected_receipt = receipt_list[index]
+
+
+def on_previous_receipt():
+    receipt_list = [f for f in os.listdir(OCR_DIR) if f.endswith(".csv")]
+    index = receipt_list.index(st.session_state.selected_receipt)
+    index = (index - 1) % len(receipt_list)
+    st.session_state.selected_receipt = receipt_list[index]
+
+
+def get_receipt_file_component():
+    receipt_list = [f for f in os.listdir(OCR_DIR) if f.endswith(".csv")]
+    receipt_file = st.selectbox("Choose receipt file", receipt_list, key="selected_receipt")
+
+    col1, col2, col3 = st.columns([0.05, 0.05, 0.9])
+    with col1:
+        st.button("⬅️", key="previous_receipt_button", on_click=on_previous_receipt, use_container_width=True)
+    with col2:
+        st.button("➡️", key="next_receipt_button", on_click=on_next_receipt, use_container_width=True)
+    return receipt_file
+

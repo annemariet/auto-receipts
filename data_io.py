@@ -15,6 +15,13 @@ def load_receipt_ocr_csv(receipt_file):
         df = pd.read_csv(os.path.join(OCR_DIR, receipt_file), index_col=0)
         df[BAK_COLUMNS] = df[EDITABLE_COLUMNS].copy()
         st.write("Loaded raw file")
+
+    if any(col not in df for col in CLASSIFICATION_COLUMNS):
+        df[CLASSIFICATION_COLUMNS] = ""
+    else:
+        df[CLASSIFICATION_COLUMNS] = (
+            df[CLASSIFICATION_COLUMNS].fillna("").astype(str)
+        )
     return df
 
 

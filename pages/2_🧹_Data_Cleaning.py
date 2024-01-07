@@ -5,6 +5,7 @@ import streamlit as st
 
 from constants import *
 from data_io import load_receipt_ocr_csv, save_output
+from streamlit_components import get_receipt_file_component
 
 
 def add_n_rows_duplicate(df, n_rows):
@@ -18,19 +19,8 @@ st.write(
 )
 
 
-receipt_list = [f for f in os.listdir(OCR_DIR) if f.endswith(".csv")]
-if st.session_state.receipt["file"] is not None:
-    receipt_file = st.session_state.receipt["file"]
-    st.session_state.receipt["index"] = receipt_list.index(receipt_file)
-else:
-    st.write(f"Loading from directory.")
-    st.session_state.receipt["index"] = 0
-    receipt_file = receipt_list[0]
-    st.session_state.receipt["file"] = receipt_file
-
+receipt_file = get_receipt_file_component()
 loaded_df = load_receipt_ocr_csv(receipt_file)
-if any(col not in loaded_df for col in CLASSIFICATION_COLUMNS):
-    loaded_df[CLASSIFICATION_COLUMNS] = ""
 
 first_row = loaded_df.iloc[0]
 try:
