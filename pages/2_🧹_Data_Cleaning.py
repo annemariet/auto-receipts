@@ -6,8 +6,10 @@ import streamlit as st
 from constants import *
 from data_io import load_receipt_ocr_csv, save_output
 
+
 def add_n_rows_duplicate(df, n_rows):
     return pd.concat((df, df.sample(n_rows)))
+
 
 st.write(
     """
@@ -27,13 +29,13 @@ else:
     st.session_state.receipt["file"] = receipt_file
 
 loaded_df = load_receipt_ocr_csv(receipt_file)
-if any(col  not in loaded_df for col in CLASSIFICATION_COLUMNS):
-    loaded_df[CLASSIFICATION_COLUMNS] = "" 
+if any(col not in loaded_df for col in CLASSIFICATION_COLUMNS):
+    loaded_df[CLASSIFICATION_COLUMNS] = ""
 
 first_row = loaded_df.iloc[0]
 try:
     image_file = os.path.join(IMG_DIR, first_row.original_filename)
-except :
+except:
     image_file = os.path.join(IMG_DIR, st.session_state.image_filenames[0])
     loaded_df["original_filename"] = st.session_state.image_filenames[0]
 global_infos = first_row[GLOBAL_INFO_COLUMNS].copy()
@@ -73,7 +75,9 @@ with col2:
         # Convert DF back to Series with a weird trick
         final_df[GLOBAL_INFO_COLUMNS] = global_df.set_index("index").T.iloc[0]
         final_df = edited_items.join(final_df[ALL_BUT_EDITABLE_COLUMNS])
-        final_df[GLOBAL_INFO_COLUMNS + ["original_filename"]] = final_df[GLOBAL_INFO_COLUMNS + ["original_filename"]].ffill()
+        final_df[GLOBAL_INFO_COLUMNS + ["original_filename"]] = final_df[
+            GLOBAL_INFO_COLUMNS + ["original_filename"]
+        ].ffill()
         result = save_output(final_df, receipt_file)
         st.session_state.saved[os.path.join(CSV_DIR, receipt_file)] = result
 

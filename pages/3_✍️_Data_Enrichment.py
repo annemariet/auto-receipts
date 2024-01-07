@@ -1,4 +1,3 @@
-
 import os
 
 import pandas as pd
@@ -6,7 +5,6 @@ import streamlit as st
 
 from constants import *
 from data_io import load_receipt_ocr_csv, save_output
-
 
 st.write(
     """
@@ -25,10 +23,12 @@ else:
     st.session_state.receipt["file"] = receipt_file
 
 loaded_descriptions = load_receipt_ocr_csv(receipt_file)
-if any(col  not in loaded_descriptions for col in CLASSIFICATION_COLUMNS):
-    loaded_descriptions[CLASSIFICATION_COLUMNS] = "" 
+if any(col not in loaded_descriptions for col in CLASSIFICATION_COLUMNS):
+    loaded_descriptions[CLASSIFICATION_COLUMNS] = ""
 else:
-    loaded_descriptions[CLASSIFICATION_COLUMNS] = loaded_descriptions[CLASSIFICATION_COLUMNS].fillna("").astype(str)
+    loaded_descriptions[CLASSIFICATION_COLUMNS] = (
+        loaded_descriptions[CLASSIFICATION_COLUMNS].fillna("").astype(str)
+    )
 
 
 form2 = st.form(key="my_form2")
@@ -36,7 +36,7 @@ edited_df = form2.data_editor(
     loaded_descriptions[["Description"] + CLASSIFICATION_COLUMNS],
     use_container_width=True,
     hide_index=True,
-    disabled="Description"
+    disabled="Description",
 )
 submit_button2 = form2.form_submit_button(label="Save")
 if submit_button2:

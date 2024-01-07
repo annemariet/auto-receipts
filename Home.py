@@ -1,8 +1,5 @@
-
-
 import pandas as pd
 import streamlit as st
-
 
 # Streamlit view
 st.set_page_config(
@@ -25,10 +22,7 @@ if "saved" not in st.session_state:
 
 
 if "receipt" not in st.session_state:
-    st.session_state.receipt = {
-        "file": None,
-        "index": None
-    }
+    st.session_state.receipt = {"file": None, "index": None}
 
 if "image_filenames" not in st.session_state:
     st.session_state.image_filenames = {}
