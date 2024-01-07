@@ -72,7 +72,8 @@ with col2:
         final_df = loaded_df.copy()
         # Convert DF back to Series with a weird trick
         final_df[GLOBAL_INFO_COLUMNS] = global_df.set_index("index").T.iloc[0]
-        final_df = edited_items.join(final_df[ALL_BUT_EDITABLE_COLUMNS]).ffill()
+        final_df = edited_items.join(final_df[ALL_BUT_EDITABLE_COLUMNS])
+        final_df[GLOBAL_INFO_COLUMNS + ["original_filename"]] = final_df[GLOBAL_INFO_COLUMNS + ["original_filename"]].ffill()
         result = save_output(final_df, receipt_file)
         st.session_state.saved[os.path.join(CSV_DIR, receipt_file)] = result
 
