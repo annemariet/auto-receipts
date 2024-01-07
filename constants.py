@@ -25,3 +25,5 @@ GLOBAL_INFO_COLUMNS = [
 
 EDITABLE_COLUMNS = ["Price", "Description", "Line_Amount", "Quantity"]
 CLASSIFICATION_COLUMNS = ["Quantity of unit", "Unit of quantity", "Simplified Description", "Category 1", "Category 2"]
+
+ALL_BUT_EDITABLE_COLUMNS = GLOBAL_INFO_COLUMNS + CLASSIFICATION_COLUMNS + ["original_filename"]

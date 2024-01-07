@@ -14,10 +14,21 @@ st.write(
 """
 )
 
-receipt_file = st.session_state.receipt["file"]
+receipt_list = [f for f in os.listdir(OCR_DIR) if f.endswith(".csv")]
+if st.session_state.receipt["file"] is not None:
+    receipt_file = st.session_state.receipt["file"]
+    st.session_state.receipt["index"] = receipt_list.index(receipt_file)
+else:
+    st.write(f"Loading from directory.")
+    st.session_state.receipt["index"] = 0
+    receipt_file = receipt_list[0]
+    st.session_state.receipt["file"] = receipt_file
+
 loaded_descriptions = load_receipt_ocr_csv(receipt_file)
 if any(col  not in loaded_descriptions for col in CLASSIFICATION_COLUMNS):
     loaded_descriptions[CLASSIFICATION_COLUMNS] = "" 
+else:
+    loaded_descriptions[CLASSIFICATION_COLUMNS] = loaded_descriptions[CLASSIFICATION_COLUMNS].fillna("").astype(str)
 
 
 form2 = st.form(key="my_form2")
