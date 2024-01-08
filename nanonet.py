@@ -1,3 +1,4 @@
+import concurrent.futures
 import configparser
 import json
 import os
@@ -89,3 +90,31 @@ def run_single_image_ocr(image_filename):
     assert nanonet_result
     ocr_df = extract_as_clean_csv(nanonet_result[0])
     return ocr_df
+
+
+def run_ocr_and_save(image_filename):
+    res = run_single_image_ocr(image_filename)
+    ocr_file = os.path.join(OCR_DIR, image_filename.replace(".jpg", ".csv"))
+    res.to_csv(ocr_file)
+    return ocr_file
+
+
+def run_multi_image_ocr(image_file_list):
+    output_files = []
+    # We can use a with statement to ensure threads are cleaned up promptly
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        # Start the load operations and mark each future with its URL
+        future_to_url = {
+            executor.submit(run_ocr_and_save, img_file): img_file
+            for img_file in image_file_list
+        }
+        for future in concurrent.futures.as_completed(future_to_url):
+            img_file = future_to_url[future]
+            try:
+                data = future.result()
+                output_files.append(data)
+            except Exception as exc:
+                print(f"{img_file} generated an exception: {exc}")
+            else:
+                print(f"{img_file} OCR result saved to {data}")
+    return output_files
