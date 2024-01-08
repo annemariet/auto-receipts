@@ -1,8 +1,8 @@
+import concurrent.futures
 import configparser
 import json
 import os
 import pathlib
-import concurrent.futures
 
 import pandas as pd
 import requests
@@ -21,17 +21,6 @@ def nanonet_ocr(image_file):
     url = "https://app.nanonets.com/api/v2/OCR/Model/9bfbc8d7-b21c-48d9-8e74-41cff355b464/LabelFile/?async=false"
 
     data = {"file": open(image_file, "rb")}
-
-    response = requests.post(
-        url, auth=requests.auth.HTTPBasicAuth(get_nanonet_key(), ""), files=data
-    )
-    return response.json()["result"]
-
-
-def nanonet_ocr_multi(image_file_list):
-    url = "https://app.nanonets.com/api/v2/OCR/Model/9bfbc8d7-b21c-48d9-8e74-41cff355b464/LabelFile/?async=false"
-
-    data = {"file": [open(image_file, "rb") for image_file in image_file_list]}
 
     response = requests.post(
         url, auth=requests.auth.HTTPBasicAuth(get_nanonet_key(), ""), files=data
@@ -115,14 +104,17 @@ def run_multi_image_ocr(image_file_list):
     # We can use a with statement to ensure threads are cleaned up promptly
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         # Start the load operations and mark each future with its URL
-        future_to_url = {executor.submit(run_ocr_and_save, img_file): img_file for img_file in image_file_list}
+        future_to_url = {
+            executor.submit(run_ocr_and_save, img_file): img_file
+            for img_file in image_file_list
+        }
         for future in concurrent.futures.as_completed(future_to_url):
             img_file = future_to_url[future]
             try:
                 data = future.result()
                 output_files.append(data)
             except Exception as exc:
-                print(f'{img_file} generated an exception: {exc}')
+                print(f"{img_file} generated an exception: {exc}")
             else:
-                print(f'{img_file} OCR result saved to {data}')
+                print(f"{img_file} OCR result saved to {data}")
     return output_files
