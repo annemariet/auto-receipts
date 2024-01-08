@@ -4,7 +4,7 @@ import streamlit as st
 
 from constants import IMG_DIR, OCR_DIR
 from data_io import load_image
-from nanonet import run_single_image_ocr
+from nanonet import run_multi_image_ocr
 
 
 def validate_and_show_image(uploaded_file, col):
@@ -58,11 +58,10 @@ def run_ocr_on_image():
             image_filename = files_exist[0]
         else:
             image_filename = files_to_submit[0]
-            with st.spinner(f"Analyzing image {image_filename}"):
-                res = run_single_image_ocr(image_filename)
-                ocr_file = os.path.join(OCR_DIR, image_filename.replace(".jpg", ".csv"))
-                res.to_csv(ocr_file)
-                st.session_state.saved[ocr_file] = res
+            with st.spinner(f"Analyzing {len(files_to_submit)} images"):
+                res = run_multi_image_ocr(files_to_submit)
+                for ocr_file in res:
+                    st.session_state.saved[ocr_file] = True
         receipt_file = image_filename.replace(".jpg", ".csv")
 
         if os.path.join(OCR_DIR, receipt_file) in st.session_state.saved:
