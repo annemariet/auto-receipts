@@ -5,6 +5,7 @@ import streamlit as st
 from PIL import Image
 
 from constants import *
+from data_processing import autocorrect, fill_missing_columns
 
 
 def load_receipt_ocr_csv(receipt_file):
@@ -16,10 +17,8 @@ def load_receipt_ocr_csv(receipt_file):
         df[BAK_COLUMNS] = df[EDITABLE_COLUMNS].copy()
         st.write("Loaded raw file")
 
-    if any(col not in df for col in CLASSIFICATION_COLUMNS):
-        df[CLASSIFICATION_COLUMNS] = ""
-    else:
-        df[CLASSIFICATION_COLUMNS] = df[CLASSIFICATION_COLUMNS].fillna("").astype(str)
+    fill_missing_columns(df, CLASSIFICATION_COLUMNS)
+    autocorrect(df)
     return df
 
 
