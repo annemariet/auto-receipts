@@ -9,10 +9,14 @@ def fill_missing_columns(input_df, columns_to_add, default_value="", default_typ
 
 
 def autocorrect_phone(input_value):
-    number = "0" + str(input_value).lstrip("0").replace(".0", "")
+    if isinstance(input_value, float):
+        number = "0" + str(input_value).replace(".0", "")
+    else:
+        number = input_value
     if len(number) < 10:
         number += "0"
-    number = " ".join((number[2 * s : 2 * s + 2] for s in range(5)))
+    if len(number) == 10:
+        number = " ".join((number[2 * s : 2 * s + 2] for s in range(5)))
     return number
 
 
