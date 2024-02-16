@@ -106,11 +106,7 @@ def run_multi_image_ocr(image_file_list):
         }
         for future in concurrent.futures.as_completed(future_to_url):
             img_file = future_to_url[future]
-            try:
-                data = future.result()
-                output_files.append(data)
-            except Exception as exc:
-                print(f"{img_file} generated an exception: {exc}")
-            else:
-                print(f"{img_file} OCR result saved to {data}")
+            data = future.result()
+            output_files.append(data)
+            print(f"{img_file} OCR result saved to {data}")
     return output_files

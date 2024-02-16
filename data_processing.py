@@ -3,8 +3,10 @@ def fill_missing_columns(input_df, columns_to_add, default_value="", default_typ
         if col not in input_df.columns:
             input_df[col] = default_value
             input_df[col] = input_df[col].astype(default_type)
-        else:
-            input_df[col] = input_df[col].fillna(default_value).astype(default_type)
+        elif default_value is not None:
+            input_df[col] = (
+                input_df[col].fillna(value=default_value).astype(default_type)
+            )
     return input_df
 
 
