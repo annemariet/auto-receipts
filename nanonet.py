@@ -9,12 +9,11 @@ import requests
 import streamlit as st
 
 from constants import *
+from data_processing import autocorrect, fill_missing_columns
 
 
 def get_nanonet_key():
-    config = configparser.ConfigParser()
-    config.read(os.path.join(pathlib.Path().home(), ".nanonet"))
-    return config["account"]["apikey"]
+    return os.environ["nanonet-apikey"]
 
 
 def nanonet_ocr(image_file):
@@ -49,26 +48,21 @@ def extract_as_clean_csv(nanonet_result):
         [processed_output for _ in range(len(processed_table))], ignore_index=True
     )
 
-    if "Line_Amount" in processed_table.columns:
-        processed_table["Line_Amount"] = processed_table["Line_Amount"].apply(
-            lambda x: x.replace("€", "").strip() if isinstance(x, str) else x
-        )
-    else:
-        processed_table["Line_Amount"] = 0.0
-
-    if "Quantity" in processed_table.columns:
-        processed_table["Quantity"] = processed_table["Quantity"].fillna(1)
-    else:
-        processed_table["Quantity"] = 1
-
-    if "Price" in processed_table.columns:
-        processed_table["Price"] = processed_table["Price"].apply(
-            lambda x: x.replace("/kg", "").replace("/ kg", "").replace("€", "").strip()
-            if isinstance(x, str)
-            else x
-        )
-    else:
-        processed_table["Price"] = processed_table["Line_Amount"]
+    fill_missing_columns(
+        processed_table,
+        ["Line_Amount", "Price"],
+        default_value=None,
+        default_type=float,
+    )
+    fill_missing_columns(
+        processed_table,
+        [
+            "Quantity",
+        ],
+        default_value=1,
+        default_type=int,
+    )
+    autocorrect(processed_table)
 
     processed_table["original_filename"] = nanonet_result["input"]
     return processed_table
@@ -110,11 +104,7 @@ def run_multi_image_ocr(image_file_list):
         }
         for future in concurrent.futures.as_completed(future_to_url):
             img_file = future_to_url[future]
-            try:
-                data = future.result()
-                output_files.append(data)
-            except Exception as exc:
-                print(f"{img_file} generated an exception: {exc}")
-            else:
-                print(f"{img_file} OCR result saved to {data}")
+            data = future.result()
+            output_files.append(data)
+            print(f"{img_file} OCR result saved to {data}")
     return output_files

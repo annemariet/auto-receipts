@@ -106,3 +106,23 @@ def get_receipt_file_component():
             use_container_width=True,
         )
     return receipt_file
+
+
+def on_next_image():
+    image_list = [f for f in os.listdir(IMG_DIR) if f.endswith(".jpg")]
+    index = image_list.index(st.session_state.next_image)
+    index = (index + 1) % len(image_list)
+    st.session_state.next_image = image_list[index]
+    print("next image:", st.session_state.next_image)
+
+
+def get_image_file_component():
+    image_list = [f for f in os.listdir(IMG_DIR) if f.endswith(".jpg")]
+    image_path = st.selectbox("Choose image file", image_list, key="next_image")
+
+    st.button(
+        "➡️",
+        key="next_receipt_button",
+        on_click=on_next_image,
+        use_container_width=True,
+    )
