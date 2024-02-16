@@ -13,9 +13,7 @@ from data_processing import autocorrect, fill_missing_columns
 
 
 def get_nanonet_key():
-    config = configparser.ConfigParser()
-    config.read(os.path.join(pathlib.Path().home(), ".nanonet"))
-    return config["account"]["apikey"]
+    return os.environ["nanonet-apikey"]
 
 
 def nanonet_ocr(image_file):
